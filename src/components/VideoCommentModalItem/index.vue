@@ -4,18 +4,56 @@
       <!-- 左侧视频区域 -->
       <div class="video-card__left">
         <!-- 视频播放区域 -->
-        <div class="video-card__player-wrap" v-if="video && video.videoPath">
-          <div class="video-player-container">
+        <div class="video-card__player-wrap" v-if="hasVideoSource">
+          <div class="video-player-shell" :class="{ 'is-player-ready': videoReady }">
+            <div
+              v-if="!videoReady && !videoLoadError"
+              class="video-player-placeholder"
+            >
+              <img
+                v-if="video.imagePath"
+                :src="getUrl(video.imagePath)"
+                alt="视频封面"
+                class="video-player-placeholder__poster"
+              />
+              <div class="video-player-placeholder__overlay">
+                <a-spin />
+                <div class="video-player-placeholder__title">视频加载中</div>
+                <div class="video-player-placeholder__desc">
+                  正在准备当前位置视频，请稍候
+                </div>
+              </div>
+            </div>
+
+            <div v-if="videoLoadError" class="video-player-empty">
+              <a-icon type="video-camera" />
+              <div class="video-player-empty__title">视频暂时无法播放</div>
+              <div class="video-player-empty__desc">
+                可能是视频源未就绪或网络异常，请稍后重试
+              </div>
+            </div>
+
+            <div class="video-player-container">
             <video
               :id="`video-player-${video.uid || video.id}`"
               class="video-js vjs-big-play-centered"
               controls
-              preload="auto"
+              preload="metadata"
               :poster="video.imagePath ? getUrl(video.imagePath) : ''"
             >
               <source :src="getUrl(video.videoPath)" type="video/mp4" />
               您的浏览器不支持HTML5视频播放
             </video>
+            </div>
+          </div>
+        </div>
+        <div class="video-card__player-wrap video-card__player-wrap--empty" v-else>
+          <div class="video-player-empty">
+            <a-icon type="video-camera" />
+            <div class="video-player-empty__title">暂无当前位置视频</div>
+            <div class="video-player-empty__desc">
+              当前任务还没有可播放的视频内容
+            </div>
           </div>
         </div>
         <!-- 视频信息 -->
@@ -321,6 +359,8 @@ export default {
       tooltipPosition: { x: 0, y: 0 },
       currentUserInfo: {},
       videoListModalVisible: false,
+      videoReady: false,
+      videoLoadError: false,
       tooltipHideTimer: null, // 修复3：初始化定时器变量
     };
   },
@@ -329,15 +369,23 @@ export default {
       this.initVideoPlayer();
     });
   },
+  beforeDestroy() {
+    this.teardownComponent();
+  },
   beforeUnmount() {
-    if (this.player && this.player.dispose) {
-      this.player.dispose();
-      this.player = null;
-    }
-    // 修复4：清除定时器，防止内存泄漏
-    clearTimeout(this.tooltipHideTimer);
+    this.teardownComponent();
+  },
+  watch: {
+    video() {
+      this.$nextTick(() => {
+        this.initVideoPlayer();
+      });
+    },
   },
   computed: {
+    hasVideoSource() {
+      return !!(this.video && this.video.videoPath);
+    },
     commentStatus() {
       const defaultStatus = {
         loading: false,
@@ -356,12 +404,38 @@ export default {
     },
   },
   methods: {
-    initVideoPlayer() {
+    resetVideoState() {
+      this.videoReady = false;
+      this.videoLoadError = false;
+    },
+    disposeVideoPlayer() {
       if (this.player && this.player.dispose) {
         this.player.dispose();
-        this.player = null;
       }
-      if (!this.video || !this.video.videoPath) return;
+      this.player = null;
+    },
+    teardownComponent() {
+      this.disposeVideoPlayer();
+      clearTimeout(this.tooltipHideTimer);
+    },
+    markVideoReady() {
+      if (this.player && this.player.controlBar) {
+        ["currentTimeDisplay", "durationDisplay", "timeDivider"].forEach((key) => {
+          const control = this.player.controlBar[key];
+          if (control && control.show) control.show();
+        });
+      }
+      this.videoLoadError = false;
+      this.videoReady = true;
+    },
+    markVideoError() {
+      this.videoReady = false;
+      this.videoLoadError = true;
+    },
+    initVideoPlayer() {
+      this.disposeVideoPlayer();
+      this.resetVideoState();
+      if (!this.hasVideoSource) return;
       const playerId = `video-player-${this.video.uid || this.video.id}`;
       const playerElement = document.getElementById(playerId);
       if (playerElement) {
@@ -370,6 +444,7 @@ export default {
           controls: true,
           responsive: true,
           fluid: true,
+          aspectRatio: "9:16",
           playbackRates: [0.5, 1, 1.5, 2],
           language: "zh-CN",
           controlBar: {
@@ -379,13 +454,13 @@ export default {
             timeDivider: true,
             remainingTimeDisplay: false,
           },
-          preload: "auto",
+          preload: "metadata",
         });
-        this.player.on("loadedmetadata", () => {
-          this.player.controlBar.currentTimeDisplay.show();
-          this.player.controlBar.durationDisplay.show();
-          this.player.controlBar.timeDivider.show();
-        });
+        this.player.one("loadedmetadata", () => this.markVideoReady());
+        this.player.one("canplay", () => this.markVideoReady());
+        this.player.one("error", () => this.markVideoError());
+      } else {
+        this.markVideoError();
       }
     },
     getLoadedComments() {
@@ -617,43 +692,153 @@ export default {
   }
 
   .video-card__left {
-    flex: 0 0 31%;
+    flex: 0 0 32%;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    height: 100%;
-    min-height: 780px;
+    height: 74vh;
+    max-height: 780px;
+    min-height: 640px;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
 
     .video-card__player-wrap {
       flex: 1;
-      min-height: 700px;
-      width: 86%;
-      border-radius: 8px;
-      background-color: #000;
+      width: 100%;
+      min-height: 0;
+      padding: 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
+      box-shadow: 0 16px 36px rgba(22, 119, 255, 0.08);
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
 
-      .video-player-container {
+      &--empty {
+        min-height: 520px;
+
+        & > .video-player-empty {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          min-height: 520px;
+          border-radius: 18px;
+        }
+      }
+
+      .video-player-shell {
+        position: relative;
         width: 100%;
         height: 100%;
+        min-height: 560px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #eef5ff;
+      }
+
+      .video-player-container {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.22s ease;
+      }
+
+      .is-player-ready {
+        .video-player-container {
+          opacity: 1;
+        }
       }
 
       .video-js {
         width: 100% !important;
-        min-height: 700px;
+        min-height: 0 !important;
         height: 100% !important;
-        border-radius: 8px;
+        border-radius: 18px;
         overflow: hidden;
+        background: #0f172a;
       }
+
       .vjs-tech,
       .vjs-poster {
-        min-height: 700px;
+        min-height: 0 !important;
         width: 100% !important;
         height: 100% !important;
+        object-fit: contain;
+        background: #0f172a;
+      }
+
+      .video-player-placeholder,
+      .video-player-empty {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 24px;
+        text-align: center;
+        color: #355070;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(22, 119, 255, 0.16), transparent 32%),
+          linear-gradient(180deg, rgba(247, 251, 255, 0.96) 0%, rgba(235, 245, 255, 0.96) 100%);
+        box-sizing: border-box;
+      }
+
+      .video-player-placeholder__poster {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(14px) saturate(1.08);
+        opacity: 0.32;
+        transform: scale(1.06);
+      }
+
+      .video-player-placeholder__overlay {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 18px 20px;
+        border: 1px solid rgba(219, 234, 254, 0.9);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 12px 30px rgba(22, 119, 255, 0.1);
+        backdrop-filter: blur(12px);
+      }
+
+      .video-player-placeholder__title,
+      .video-player-empty__title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #10233f;
+      }
+
+      .video-player-placeholder__desc,
+      .video-player-empty__desc {
+        max-width: 220px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #6b829f;
+      }
+
+      .video-player-empty {
+        .anticon {
+          font-size: 34px;
+          color: #1677ff;
+        }
       }
     }
 
