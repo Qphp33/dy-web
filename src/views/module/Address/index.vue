@@ -7,7 +7,6 @@
             <span></span>
             Douyin Location
           </div>
-          <h3>位置信息任务中心</h3>
           <p>点击任意任务行可查看地址明细、归属地用户和当前位置视频。</p>
           <div class="address-hero__metrics">
             <div class="address-metric">
@@ -444,13 +443,6 @@
     box-shadow: 0 0 14px rgba(254, 44, 85, 0.46);
   }
 
-  .address-hero h3 {
-    margin: 0 0 8px;
-    color: #10233f;
-    font-size: 28px;
-    font-weight: 800;
-  }
-
   .address-hero p {
     margin: 0;
     color: #62748f;
@@ -616,8 +608,8 @@
 
   :deep(.ant-table-tbody > tr.custom-table-row:hover > td) {
     cursor: pointer;
-    background: rgba(242, 248, 255, 0.88) !important;
-    box-shadow: inset 4px 0 0 #1677ff, inset 0 0 0 1px rgba(37, 244, 238, 0.18);
+    background: transparent !important;
+    box-shadow: none;
   }
 
   :deep(.address-pagination .ant-pagination-item) {
