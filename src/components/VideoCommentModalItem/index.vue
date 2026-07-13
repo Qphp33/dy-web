@@ -63,20 +63,24 @@
           </h3>
           <div class="video-info__stats">
             <span class="stats__item">
-              <a-icon type="like" />
-              {{ video.jsonString?.likes || 0 }} 点赞
+              <span class="stats__icon"><a-icon type="like" /></span>
+              <span class="stats__value">{{ video.jsonString?.likes || 0 }}</span>
+              <span class="stats__label">点赞</span>
             </span>
             <span class="stats__item">
-              <a-icon type="message" />
-              {{ video.jsonString?.comments || 0 }} 评论
+              <span class="stats__icon"><a-icon type="message" /></span>
+              <span class="stats__value">{{ video.jsonString?.comments || 0 }}</span>
+              <span class="stats__label">评论</span>
             </span>
             <span class="stats__item">
-              <a-icon type="share-alt" />
-              {{ video.jsonString?.shares || 0 }} 分享
+              <span class="stats__icon"><a-icon type="share-alt" /></span>
+              <span class="stats__value">{{ video.jsonString?.shares || 0 }}</span>
+              <span class="stats__label">分享</span>
             </span>
             <span class="stats__item">
-              <a-icon type="check-square" />
-              {{ video.jsonString?.collects || 0 }} 收藏
+              <span class="stats__icon"><a-icon type="check-square" /></span>
+              <span class="stats__value">{{ video.jsonString?.collects || 0 }}</span>
+              <span class="stats__label">收藏</span>
             </span>
           </div>
         </div>
@@ -736,7 +740,7 @@ export default {
         min-height: 560px;
         border-radius: 18px;
         overflow: hidden;
-        background: #eef5ff;
+        background: #0f172a;
       }
 
       .video-player-container {
@@ -764,12 +768,37 @@ export default {
         background: #0f172a;
       }
 
+      ::v-deep .video-player-shell .video-js,
+      ::v-deep .video-player-shell .video-js.vjs-fluid,
+      ::v-deep .video-player-shell .video-js.vjs-16-9,
+      ::v-deep .video-player-shell .video-js.vjs-9-16 {
+        width: 100% !important;
+        height: 100% !important;
+        padding-top: 0 !important;
+      }
+
+      ::v-deep .video-player-shell .vjs-tech,
+      ::v-deep .video-player-shell video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        background: #0f172a !important;
+      }
+
+      ::v-deep .video-player-shell .vjs-poster {
+        background-size: contain !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        background-color: #0f172a !important;
+      }
+
       .vjs-tech,
       .vjs-poster {
         min-height: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        object-fit: contain;
+        object-fit: contain !important;
         background: #0f172a;
       }
 
@@ -846,7 +875,7 @@ export default {
       flex-shrink: 0;
       width: 100%;
       box-sizing: border-box;
-      padding: 0 2px;
+      padding: 0;
 
       .video-info__title {
         font-size: 16px;
@@ -861,20 +890,59 @@ export default {
       }
 
       .video-info__stats {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         align-items: center;
-        gap: 15px;
-        font-size: 11px;
-        color: #666;
+        gap: 8px;
 
         .stats__item {
           display: flex;
+          min-width: 0;
           align-items: center;
-          gap: 4px;
-          cursor: pointer;
-          transition: color 0.2s;
+          justify-content: center;
+          gap: 5px;
+          height: 32px;
+          padding: 0 8px;
+          border: 1px solid #e2eefb;
+          border-radius: 999px;
+          background: #f7fbff;
+          color: #355070;
+          font-size: 12px;
+          line-height: 1;
+          transition: color 0.2s, border-color 0.2s, background 0.2s;
+
           &:hover {
-            color: #007aff;
+            border-color: #bfddff;
+            background: #eef6ff;
+            color: #1677ff;
+          }
+
+          .stats__icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            border-radius: 50%;
+            background: rgba(22, 119, 255, 0.1);
+            color: #1677ff;
+            font-size: 11px;
+          }
+
+          .stats__value {
+            max-width: 42px;
+            overflow: hidden;
+            color: #10233f;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .stats__label {
+            color: #6b829f;
+            font-weight: 600;
+            white-space: nowrap;
           }
         }
       }
