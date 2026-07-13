@@ -191,7 +191,7 @@
                         </span>
 
                         <!-- 核心修改1：状态区域 - 已获取时显示按钮 -->
-                        <div class="meta-row__item status-button-wrapper tooltip-header__btn-wrap">
+                        <div class="status-button-wrapper tooltip-header__btn-wrap">
                           <!-- 非已获取状态：保持原有样式 -->
                           <span
                             v-if="getStatusText(video.status) !== '已获取'"
@@ -2258,6 +2258,9 @@
       }
 
       .status-button-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         padding: 0;
         border: 0;
         background: transparent;
