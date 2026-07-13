@@ -284,6 +284,7 @@
           单用户前六条视频: 'green',
           单用户所有视频: 'green',
           前六条: 'green',
+          综合视频: 'geekblue',
         };
         return colorMap[tag] || 'default';
       },

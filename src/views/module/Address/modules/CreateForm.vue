@@ -78,7 +78,7 @@
 
           <a-form-model-item prop="tags">
             <div class="task-tags">
-              <a-checkbox-group v-model="form.tags">
+              <a-checkbox-group v-model="form.tags" @change="handleTagsChange">
                 <div class="task-tags__grid">
                   <label class="task-tag-card">
                     <a-checkbox value="视频">视频</a-checkbox>
@@ -95,6 +95,10 @@
                   <label class="task-tag-card">
                     <a-checkbox value="地址">地址</a-checkbox>
                     <span>保留地址相关字段</span>
+                  </label>
+                  <label class="task-tag-card">
+                    <a-checkbox value="综合视频">综合视频</a-checkbox>
+                    <span>综合抓取位置相关视频</span>
                   </label>
                 </div>
               </a-checkbox-group>
@@ -157,6 +161,7 @@ export default {
       formType: 1,
       open: false,
       exclusiveTags: ["单用户所有视频", "单用户前六条视频"],
+      mutuallyExclusiveTags: ["地址", "综合视频"],
       rules: {
         devId: [
           { required: true, message: "请选择设备 ID", trigger: "change" },
@@ -206,6 +211,23 @@ export default {
       };
       this.clearFormValidate();
     },
+    handleTagsChange(checkedValues) {
+      const hasAddress = checkedValues.includes("地址");
+      const hasComprehensive = checkedValues.includes("综合视频");
+      
+      if (hasAddress && hasComprehensive) {
+        const indexOfAddress = checkedValues.indexOf("地址");
+        const indexOfComprehensive = checkedValues.indexOf("综合视频");
+        
+        if (indexOfAddress > indexOfComprehensive) {
+          // 地址是后选的，取消综合视频
+          this.form.tags = checkedValues.filter(v => v !== "综合视频");
+        } else {
+          // 综合视频是后选的，取消地址
+          this.form.tags = checkedValues.filter(v => v !== "地址");
+        }
+      }
+    },
     handleAdd() {
       this.reset();
       this.open = true;
@@ -234,6 +256,7 @@ export default {
         } else {
           this.radioTag = "单用户前六条视频";
         }
+        
         this.clearFormValidate();
       });
     },
@@ -397,7 +420,7 @@ export default {
 
 .task-tags__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
