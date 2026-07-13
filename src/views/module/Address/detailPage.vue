@@ -2257,6 +2257,22 @@
         border: 1px solid #dbeafe;
       }
 
+      .status-button-wrapper {
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+
+      .tooltip-header__btn-wrap .ant-btn {
+        border-radius: 999px;
+        box-shadow: none;
+
+        &:hover,
+        &:focus {
+          box-shadow: none;
+        }
+      }
+
       .content__divider {
         margin: 4px 0 !important;
         background: #e9f1fb;
