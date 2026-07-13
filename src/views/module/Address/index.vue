@@ -1,16 +1,37 @@
 <template>
   <div class="address-page">
     <a-card :bordered="false" class="address-panel">
-      <div class="table-operations">
-        <div class="table-operations__title">
-          <h3>任务列表</h3>
-          <p>点击任意任务行可查看该任务下的地址明细。</p>
+      <div class="table-operations address-hero">
+        <div class="address-hero__content">
+          <div class="address-hero__eyebrow">
+            <span></span>
+            Douyin Location
+          </div>
+          <h3>位置信息任务中心</h3>
+          <p>点击任意任务行可查看地址明细、归属地用户和当前位置视频。</p>
+          <div class="address-hero__metrics">
+            <div class="address-metric">
+              <strong>{{ taskCountText }}</strong>
+              <small>采集任务</small>
+            </div>
+            <div class="address-metric address-metric--cyan">
+              <strong>{{ deviceCountText }}</strong>
+              <small>关联设备</small>
+            </div>
+          </div>
         </div>
-        <div class="table-operations__actions">
-          <a-button type="primary" @click="$refs.CreateForm.handleAdd()">
+        <div class="table-operations__actions address-hero__actions">
+          <a-button type="primary" class="address-create-btn" @click="$refs.CreateForm.handleAdd()">
             <a-icon type="plus" />新建位置信息任务
           </a-button>
-          <table-setting :table-size.sync="tableSize" v-model="columns" :refresh-loading="loading" @refresh="getList" />
+          <div class="address-setting-pill">
+            <table-setting
+              :table-size.sync="tableSize"
+              v-model="columns"
+              :refresh-loading="loading"
+              @refresh="getList"
+            />
+          </div>
         </div>
       </div>
 
@@ -183,6 +204,14 @@
         ],
       };
     },
+    computed: {
+      taskCountText() {
+        return this.total || this.list.length || 0;
+      },
+      deviceCountText() {
+        return this.deviceData.length || 0;
+      },
+    },
     created() {
       this.getList();
     },
@@ -294,17 +323,51 @@
 
 <style scoped>
   .address-page {
-    padding: 8px;
-    background: linear-gradient(180deg, #f7fbff 0%, #f1f6fc 100%);
+    position: relative;
+    padding: 18px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 10% 4%, rgba(37, 244, 238, 0.22), transparent 26%),
+      radial-gradient(circle at 84% 0%, rgba(22, 119, 255, 0.18), transparent 28%),
+      radial-gradient(circle at 94% 26%, rgba(254, 44, 85, 0.1), transparent 24%),
+      linear-gradient(180deg, #f8fbff 0%, #eef6ff 58%, #f7fbff 100%);
     min-height: 100%;
   }
 
+  .address-page::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: '';
+    background-image:
+      linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 76%);
+  }
+
   .address-panel {
+    position: relative;
+    z-index: 1;
     border: 0;
-    border-radius: 26px;
+    border-radius: 28px;
     overflow: hidden;
-    background: #fff;
-    box-shadow: 0 12px 32px rgba(22, 119, 255, 0.08);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 24px 64px rgba(22, 119, 255, 0.14);
+    backdrop-filter: blur(22px) saturate(150%);
+  }
+
+  .address-panel::before {
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    pointer-events: none;
+    border-radius: inherit;
+    content: '';
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(22, 119, 255, 0.26), rgba(37, 244, 238, 0.22), rgba(254, 44, 85, 0.14));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
   :deep(.address-panel .ant-card-body) {
@@ -313,23 +376,124 @@
 
   .table-operations {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 22px;
-    padding: 4px 2px 18px;
-    border-bottom: 1px solid #e8f1fb;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 26px;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.58)),
+      radial-gradient(circle at 0% 0%, rgba(22, 119, 255, 0.16), transparent 34%),
+      radial-gradient(circle at 96% 0%, rgba(37, 244, 238, 0.18), transparent 36%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 18px 42px rgba(22, 119, 255, 0.1);
+    backdrop-filter: blur(18px) saturate(140%);
   }
 
-  .table-operations__title h3 {
-    margin: 0 0 6px;
-    font-size: 20px;
-    color: #1f2d3d;
+  .address-hero::before {
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    pointer-events: none;
+    border-radius: inherit;
+    content: '';
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.88), rgba(22, 119, 255, 0.28), rgba(37, 244, 238, 0.3), rgba(254, 44, 85, 0.18));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
-  .table-operations__title p {
+  .address-hero::after {
+    position: absolute;
+    right: -64px;
+    top: -64px;
+    width: 220px;
+    height: 220px;
+    border-radius: 999px;
+    content: '';
+    background: radial-gradient(circle, rgba(37, 244, 238, 0.28), transparent 64%);
+    filter: blur(6px);
+  }
+
+  .address-hero__content,
+  .address-hero__actions {
+    position: relative;
+    z-index: 1;
+  }
+
+  .address-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #1677ff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .address-hero__eyebrow span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fe2c55;
+    box-shadow: 0 0 14px rgba(254, 44, 85, 0.46);
+  }
+
+  .address-hero h3 {
+    margin: 0 0 8px;
+    color: #10233f;
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  .address-hero p {
     margin: 0;
-    color: #6b7a90;
+    color: #62748f;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .address-hero__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .address-metric {
+    min-width: 112px;
+    padding: 12px 14px;
+    border: 1px solid #d9eaff;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 10px 22px rgba(22, 119, 255, 0.08);
+    backdrop-filter: blur(12px);
+  }
+
+  .address-metric--cyan {
+    border-color: rgba(37, 214, 210, 0.35);
+    background: rgba(37, 244, 238, 0.1);
+  }
+
+  .address-metric strong,
+  .address-metric small {
+    display: block;
+  }
+
+  .address-metric strong {
+    color: #10233f;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .address-metric small {
+    margin-top: 8px;
+    color: #7487a3;
   }
 
   .table-operations__actions {
@@ -338,10 +502,37 @@
     gap: 12px;
   }
 
+  .address-hero__actions {
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-width: 240px;
+  }
+
+  .address-create-btn {
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 999px;
+    box-shadow: 0 12px 24px rgba(22, 119, 255, 0.22);
+    font-weight: 700;
+  }
+
+  .address-setting-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #dcecff;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+  }
+
   .task-cell strong {
     display: block;
     font-size: 15px;
-    color: #0f172a;
+    color: #10233f;
     margin-bottom: 4px;
   }
 
@@ -356,8 +547,10 @@
     gap: 8px;
     padding: 8px 12px;
     border-radius: 999px;
-    background: #f0f7ff;
+    background: linear-gradient(135deg, #eef7ff, #f6fbff);
+    border: 1px solid #d9eaff;
     color: #1677ff;
+    font-weight: 600;
   }
 
   .time-cell span,
@@ -371,12 +564,19 @@
     gap: 6px;
   }
 
+  .tag-list :deep(.ant-tag) {
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-weight: 600;
+  }
+
   .status-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 8px 14px;
     border-radius: 999px;
+    border: 1px solid #d9eaff;
     background: #f0f7ff;
     color: #1677ff;
     font-weight: 600;
@@ -387,6 +587,7 @@
     height: 8px;
     border-radius: 50%;
     background: currentColor;
+    box-shadow: 0 0 12px rgba(22, 119, 255, 0.45);
   }
 
   .remark-cell {
@@ -399,28 +600,48 @@
   }
 
   :deep(.address-table .ant-table-thead > tr > th) {
-    background: #f7fbff;
+    background: rgba(243, 248, 255, 0.84);
     color: #355070;
     font-weight: 700;
     border-bottom: 1px solid #e6eff8;
+    backdrop-filter: blur(12px);
   }
 
   :deep(.address-table .ant-table-tbody > tr > td) {
     border-bottom: 1px solid #edf3fa;
     padding-top: 18px;
     padding-bottom: 18px;
+    transition: all 0.2s ease;
   }
 
   :deep(.ant-table-tbody > tr.custom-table-row:hover > td) {
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: #f5faff !important;
+    background: rgba(242, 248, 255, 0.88) !important;
+    box-shadow: inset 4px 0 0 #1677ff, inset 0 0 0 1px rgba(37, 244, 238, 0.18);
+  }
+
+  :deep(.address-pagination .ant-pagination-item) {
+    border-radius: 10px;
+  }
+
+  :deep(.address-pagination .ant-pagination-item-active) {
+    border-color: #1677ff;
+    box-shadow: 0 8px 18px rgba(22, 119, 255, 0.18);
   }
 
   @media (max-width: 960px) {
     .table-operations {
       flex-direction: column;
       align-items: stretch;
+    }
+
+    .address-page {
+      padding: 12px;
+    }
+
+    .address-hero__actions {
+      align-items: stretch;
+      min-width: 0;
     }
   }
 </style>
