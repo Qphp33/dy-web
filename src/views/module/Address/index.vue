@@ -1,25 +1,8 @@
 <template>
   <div class="address-page">
     <a-card :bordered="false" class="address-panel">
-      <div class="table-operations address-hero">
-        <div class="address-hero__content">
-          <div class="address-hero__eyebrow">
-            <span></span>
-            Douyin Location
-          </div>
-          <p>点击任意任务行可查看地址明细、归属地用户和当前位置视频。</p>
-          <div class="address-hero__metrics">
-            <div class="address-metric">
-              <strong>{{ taskCountText }}</strong>
-              <small>采集任务</small>
-            </div>
-            <div class="address-metric address-metric--cyan">
-              <strong>{{ deviceCountText }}</strong>
-              <small>关联设备</small>
-            </div>
-          </div>
-        </div>
-        <div class="table-operations__actions address-hero__actions">
+      <div class="table-operations">
+        <div class="table-operations__actions">
           <a-button type="primary" class="address-create-btn" @click="$refs.CreateForm.handleAdd()">
             <a-icon type="plus" />新建位置信息任务
           </a-button>
@@ -203,14 +186,6 @@
         ],
       };
     },
-    computed: {
-      taskCountText() {
-        return this.total || this.list.length || 0;
-      },
-      deviceCountText() {
-        return this.deviceData.length || 0;
-      },
-    },
     created() {
       this.getList();
     },
@@ -322,51 +297,17 @@
 
 <style scoped>
   .address-page {
-    position: relative;
-    padding: 18px;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 10% 4%, rgba(37, 244, 238, 0.22), transparent 26%),
-      radial-gradient(circle at 84% 0%, rgba(22, 119, 255, 0.18), transparent 28%),
-      radial-gradient(circle at 94% 26%, rgba(254, 44, 85, 0.1), transparent 24%),
-      linear-gradient(180deg, #f8fbff 0%, #eef6ff 58%, #f7fbff 100%);
+    padding: 8px;
+    background: linear-gradient(180deg, #f7fbff 0%, #f1f6fc 100%);
     min-height: 100%;
   }
 
-  .address-page::before {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    content: '';
-    background-image:
-      linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px);
-    background-size: 42px 42px;
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 76%);
-  }
-
   .address-panel {
-    position: relative;
-    z-index: 1;
     border: 0;
-    border-radius: 28px;
+    border-radius: 24px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.72);
-    box-shadow: 0 24px 64px rgba(22, 119, 255, 0.14);
-    backdrop-filter: blur(22px) saturate(150%);
-  }
-
-  .address-panel::before {
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    pointer-events: none;
-    border-radius: inherit;
-    content: '';
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(22, 119, 255, 0.26), rgba(37, 244, 238, 0.22), rgba(254, 44, 85, 0.14));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(22, 119, 255, 0.08);
   }
 
   :deep(.address-panel .ant-card-body) {
@@ -375,117 +316,12 @@
 
   .table-operations {
     display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 24px;
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    border-radius: 26px;
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.58)),
-      radial-gradient(circle at 0% 0%, rgba(22, 119, 255, 0.16), transparent 34%),
-      radial-gradient(circle at 96% 0%, rgba(37, 244, 238, 0.18), transparent 36%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 18px 42px rgba(22, 119, 255, 0.1);
-    backdrop-filter: blur(18px) saturate(140%);
-  }
-
-  .address-hero::before {
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    pointer-events: none;
-    border-radius: inherit;
-    content: '';
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0.88), rgba(22, 119, 255, 0.28), rgba(37, 244, 238, 0.3), rgba(254, 44, 85, 0.18));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-
-  .address-hero::after {
-    position: absolute;
-    right: -64px;
-    top: -64px;
-    width: 220px;
-    height: 220px;
-    border-radius: 999px;
-    content: '';
-    background: radial-gradient(circle, rgba(37, 244, 238, 0.28), transparent 64%);
-    filter: blur(6px);
-  }
-
-  .address-hero__content,
-  .address-hero__actions {
-    position: relative;
-    z-index: 1;
-  }
-
-  .address-hero__eyebrow {
-    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    color: #1677ff;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .address-hero__eyebrow span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #fe2c55;
-    box-shadow: 0 0 14px rgba(254, 44, 85, 0.46);
-  }
-
-  .address-hero p {
-    margin: 0;
-    color: #62748f;
-    font-size: 14px;
-    line-height: 1.7;
-  }
-
-  .address-hero__metrics {
-    display: flex;
-    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 12px;
-    margin-top: 20px;
-  }
-
-  .address-metric {
-    min-width: 112px;
-    padding: 12px 14px;
-    border: 1px solid #d9eaff;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.62);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 10px 22px rgba(22, 119, 255, 0.08);
-    backdrop-filter: blur(12px);
-  }
-
-  .address-metric--cyan {
-    border-color: rgba(37, 214, 210, 0.35);
-    background: rgba(37, 244, 238, 0.1);
-  }
-
-  .address-metric strong,
-  .address-metric small {
-    display: block;
-  }
-
-  .address-metric strong {
-    color: #10233f;
-    font-size: 24px;
-    line-height: 1;
-  }
-
-  .address-metric small {
-    margin-top: 8px;
-    color: #7487a3;
+    margin-bottom: 18px;
+    padding: 0 0 18px;
+    border-bottom: 1px solid #e8f1fb;
   }
 
   .table-operations__actions {
@@ -494,15 +330,8 @@
     gap: 12px;
   }
 
-  .address-hero__actions {
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-end;
-    min-width: 240px;
-  }
-
   .address-create-btn {
-    height: 42px;
+    height: 38px;
     padding: 0 20px;
     border-radius: 999px;
     box-shadow: 0 12px 24px rgba(22, 119, 255, 0.22);
@@ -516,9 +345,7 @@
     padding: 8px 12px;
     border: 1px solid #dcecff;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.62);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
+    background: #f7fbff;
   }
 
   .task-cell strong {
@@ -623,17 +450,11 @@
 
   @media (max-width: 960px) {
     .table-operations {
-      flex-direction: column;
-      align-items: stretch;
+      justify-content: flex-start;
     }
 
     .address-page {
       padding: 12px;
-    }
-
-    .address-hero__actions {
-      align-items: stretch;
-      min-width: 0;
     }
   }
 </style>

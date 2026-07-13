@@ -1,5 +1,5 @@
 <template>
-  <div class="address address--light-douyin">
+  <div class="address">
     <div class="video-list-container">
       <!-- 头部卡片区域 -->
       <div class="video-list__page-header">
