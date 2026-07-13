@@ -2114,7 +2114,7 @@
     }
 
     .video-list__page-header {
-      margin-bottom: 22px;
+      margin-bottom: 12px;
     }
 
     .video-list__douyin-card {
@@ -2126,12 +2126,16 @@
       border: 1px solid #e2eefb;
 
       .ant-card-body {
-        padding: 28px !important;
+        padding: 12px 16px !important;
       }
 
       .douyin-card__content {
-        gap: 26px;
+        height: auto !important;
+        max-height: 150px;
+        min-height: 0;
+        gap: 16px;
         align-items: stretch;
+        overflow: hidden;
       }
 
       .douyin-card__left,
@@ -2143,11 +2147,21 @@
       }
 
       .douyin-card__left {
-        padding: 18px;
+        padding: 10px 12px;
       }
 
       .douyin-card__right {
-        padding: 22px;
+        padding: 10px 12px;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .douyin-card__region-img {
+        height: 126px;
+      }
+
+      .douyin-comment__scroll {
+        max-height: 96px;
       }
 
       .douyin-comment__title,
@@ -2169,11 +2183,15 @@
 
     .video-list__sort-buttons {
       position: sticky;
-      top: 12px;
+      top: 0;
       z-index: 5;
-      margin-bottom: 24px;
-      padding: 18px 20px;
-      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 56px;
+      margin-bottom: 16px;
+      padding: 10px 18px;
+      border-radius: 18px;
       border: 1px solid #e4eef9;
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(14px);
@@ -2199,7 +2217,21 @@
     .video-list__sort-buttons .sort-btn,
     .video-list__sort-buttons .reset-btn,
     .video-list__sort-buttons .ant-select {
-      height: 40px;
+      height: 36px;
+    }
+
+    .video-list__sort-buttons .sort-btn,
+    .video-list__sort-buttons .reset-btn {
+      line-height: 34px;
+    }
+
+    .video-list__sort-buttons .ant-select-selection {
+      height: 36px;
+      line-height: 34px;
+    }
+
+    .video-list__sort-buttons .ant-select-selection__rendered {
+      line-height: 34px;
     }
 
     .video-list__video-card {
