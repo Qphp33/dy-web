@@ -89,16 +89,14 @@
       <!-- 右侧评论区 -->
       <div class="video-card__right">
         <div class="video-comment__header">
-          <div>
-            <a-icon type="message" />
-            <span style="margin-left: 7px"
-              >全部评论
-              {{
-                video.comments.length > 0
-                  ? " (" + video.comments.length + ")"
-                  : ""
-              }}</span
-            >
+          <div class="video-comment__header-title">
+            <span class="video-comment__header-icon">
+              <a-icon type="message" />
+            </span>
+            <span>
+              全部评论
+              <small v-if="video.comments.length > 0">({{ video.comments.length }})</small>
+            </span>
           </div>
           <div class="btn_box" v-if="video.comments.length > 0">
             <a
@@ -190,7 +188,21 @@
               <span v-else class="load-more__no-more">已加载全部评论</span>
             </div>
           </div>
-          <div class="video-comment__empty" v-else>暂无评论~</div>
+          <div class="video-comment__empty" v-else>
+            <div class="video-comment__empty-card">
+              <div class="video-comment__empty-glow"></div>
+              <div class="video-comment__empty-icon">
+                <a-icon type="message" />
+              </div>
+              <div class="video-comment__empty-title">暂无评论</div>
+              <div class="video-comment__empty-desc">
+                当前位置视频暂时没有评论数据，后续同步后会在这里展示互动内容
+              </div>
+              <div class="video-comment__empty-tip">
+                <a-icon type="clock-circle" /> 等待评论同步
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -671,8 +683,28 @@ export default {
   max-height: 780px;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #f7f8fa;
+  padding: 14px;
+  border: 1px solid rgba(226, 238, 251, 0.9);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(22, 119, 255, 0.14), transparent 28%),
+    radial-gradient(circle at 88% 0%, rgba(37, 244, 238, 0.12), transparent 26%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(244, 249, 255, 0.68) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 24px 70px rgba(22, 119, 255, 0.12);
+  backdrop-filter: blur(22px) saturate(145%);
   position: relative;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    content: "";
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.72), rgba(22, 119, 255, 0.08), rgba(37, 244, 238, 0.08));
+  }
+
   .video-js {
     min-height: 100% !important;
     height: 100% !important;
@@ -683,6 +715,8 @@ export default {
     gap: 15px;
     width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 1;
     box-sizing: border-box;
   }
 
@@ -950,55 +984,127 @@ export default {
   }
 
   .video-card__right {
-    flex: 0 0 68%;
-    height: 100%;
-    border-left: 1px solid #eee;
-    padding: 0 15px;
+    position: relative;
+    flex: 1 1 auto;
+    height: 74vh;
+    max-height: 780px;
+    min-height: 640px;
+    border: 1px solid rgba(226, 238, 251, 0.82);
+    border-radius: 24px;
+    padding: 16px 18px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(22, 119, 255, 0.1), transparent 32%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(247, 251, 255, 0.62));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 14px 36px rgba(22, 119, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(140%);
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      content: "";
+      background-image:
+        linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.38), transparent 72%);
+    }
 
     .video-comment__header {
       font-size: 13px;
       display: flex;
       justify-content: space-between;
-
+      align-items: center;
       gap: 8px;
       width: 100%;
       flex-shrink: 0;
-      color: #333;
-      font-weight: 500;
+      padding: 2px 2px 14px;
+      color: #10233f;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      border-bottom: 1px solid rgba(226, 238, 251, 0.82);
     }
-    .btn_box {
-      float: right;
-      margin-right: 16px;
 
-      a {
-        font-weight: 700;
-        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-          sans-serif;
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        text-decoration-thickness: 1px;
-        text-decoration-color: #1890ff;
+    .video-comment__header-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      small {
+        margin-left: 4px;
+        color: #6b829f;
+        font-size: 12px;
+        font-weight: 600;
       }
     }
+
+    .video-comment__header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(22, 119, 255, 0.1);
+      color: #1677ff;
+    }
+
+    .btn_box {
+      float: right;
+      margin-right: 0;
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #1677ff;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(22, 119, 255, 0.08);
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #bfddff;
+          background: #eef6ff;
+          color: #0958d9;
+        }
+      }
+    }
+
     .video-comment__scroll {
       flex: 1;
-      height: 740px;
+      height: auto;
+      min-height: 0;
       overflow-y: auto;
+      margin-top: 14px;
       padding-right: 5px;
+      position: relative;
+      z-index: 1;
       scrollbar-width: thin;
-      scrollbar-color: #ddd #f5f5f5;
+      scrollbar-color: #c9ddf5 transparent;
       box-sizing: border-box;
 
       &::-webkit-scrollbar {
         width: 6px;
       }
       &::-webkit-scrollbar-thumb {
-        background-color: #ddd;
+        background-color: #c9ddf5;
         border-radius: 3px;
       }
       &::-webkit-scrollbar-track {
-        background-color: #f5f5f5;
+        background-color: transparent;
         border-radius: 3px;
       }
     }
@@ -1099,13 +1205,97 @@ export default {
 
     .video-comment__empty {
       text-align: center;
-      padding: 30px 0;
-      color: #999;
+      min-height: 100%;
+      padding: 18px;
+      color: #6b829f;
       font-size: 13px;
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .video-comment__empty-card {
+      position: relative;
+      width: 92%;
+      max-width: 420px;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 34px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(244, 249, 255, 0.56)),
+        radial-gradient(circle at 50% 0%, rgba(22, 119, 255, 0.12), transparent 44%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 18px 48px rgba(22, 119, 255, 0.1);
+      backdrop-filter: blur(18px) saturate(150%);
+      overflow: hidden;
+    }
+
+    .video-comment__empty-glow {
+      position: absolute;
+      top: -56px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(22, 119, 255, 0.14);
+      filter: blur(18px);
+    }
+
+    .video-comment__empty-icon {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border: 1px solid #dbeafe;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #eef6ff);
+      color: #1677ff;
+      font-size: 26px;
+      box-shadow: 0 12px 28px rgba(22, 119, 255, 0.14);
+    }
+
+    .video-comment__empty-title {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      color: #10233f;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .video-comment__empty-desc {
+      position: relative;
+      z-index: 1;
+      max-width: 280px;
+      color: #6b829f;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .video-comment__empty-tip {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 6px 12px;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #1677ff;
+      font-size: 12px;
+      font-weight: 700;
     }
   }
 

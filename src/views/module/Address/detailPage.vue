@@ -1361,9 +1361,37 @@
   // 其他基础样式
   .custom-modal-top {
     .ant-modal {
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border-radius: 30px;
+      box-shadow: 0 28px 80px rgba(15, 35, 63, 0.22);
       top: 50px !important;
+    }
+
+    .ant-modal-content {
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(22, 119, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 92% 0%, rgba(37, 244, 238, 0.12), transparent 28%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(244, 249, 255, 0.68));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.88),
+        0 30px 90px rgba(15, 35, 63, 0.18);
+      backdrop-filter: blur(22px) saturate(145%);
+    }
+
+    .ant-modal-body {
+      padding: 16px;
+      background: transparent;
+    }
+
+    .ant-modal-close-x {
+      color: #6b829f;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #1677ff;
+      }
     }
   }
 
