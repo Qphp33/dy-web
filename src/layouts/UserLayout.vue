@@ -280,8 +280,7 @@ export default {
       /* 旋转45度 */
       transform-origin: center;
       /* 设置旋转的中心为元素的中心 */
-      background-color:
-        color-mix(in srgb, rgb(var(--primary-100-color)) 80%, rgb(var(--primary-50-color)));
+      background-color: #bfd9ff;
     }
 
     .bg-bubble {
@@ -291,8 +290,7 @@ export default {
       right: -120px;
       width: 360px;
       height: 360px;
-      background-color:
-        color-mix(in srgb, rgb(var(--primary-100-color)) 80%, rgb(var(--primary-50-color)));
+      background-color: #bfd9ff;
       border-radius: 50%;
     }
 
@@ -304,8 +302,7 @@ export default {
       width: 50px;
       height: 50px;
       cursor: pointer;
-      background:
-        color-mix(in srgb, rgb(var(--primary-50-color)) 80%, rgb(var(--primary-50-color)));
+      background: #e6f1ff;
       border-radius: 50%;
       transition: all .3s;
     }
@@ -317,7 +314,7 @@ export default {
       bottom: 10%;
       width: 50px;
       height: 50px;
-      background-color: rgb(var(--primary-100-color));
+      background-color: #b5d3ff;
       transform: rotate(60deg);
     }
 
@@ -325,7 +322,7 @@ export default {
       position: absolute;
       width: 14px;
       height: 14px;
-      background-color: rgb(var(--primary-50-color));
+      background-color: #e6f1ff;
       border-radius: 50%;
       top: 140px;
       transform: rotate(-15deg);
@@ -356,7 +353,7 @@ export default {
         width: 50px;
         height: 50px;
         transform: rotate(-15deg);
-        background-color: rgb(from rgb(var(--primary-color)) r g b / 30%);
+        background-color: rgba(14, 66, 210, .3);
       }
 
       .square.square-pink {
@@ -366,7 +363,7 @@ export default {
         z-index: 1;
         width: 70px;
         height: 70px;
-        background-color: rgb(from rgb(var(--primary-color)) r g b / 15%);
+        background-color: rgba(14, 66, 210, .15);
       }
 
       .square.square-purple {
@@ -375,7 +372,7 @@ export default {
         z-index: 3;
         width: 32px;
         height: 32px;
-        background-color: rgb(from rgb(var(--primary-color)) r g b / 45%);
+        background-color: rgba(14, 66, 210, .45);
       }
     }
   }

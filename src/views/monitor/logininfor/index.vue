@@ -338,7 +338,8 @@
         if (!item.douyinId) return this.$message.error('抖音号不存在！');
 
         var routeData = {};
-        if (item.tags?.includes('地址')) {
+        const isAddressDetailPage = item.tags?.includes('地址') || item.tags?.includes('综合视频');
+        if (isAddressDetailPage) {
           routeData = this.$router.resolve({
             name: 'addressDetailPage',
             query: {
@@ -353,7 +354,7 @@
             query: {
               devId: item.devId,
               douyinId: item.douyinId,
-              type: item.tags?.includes('地址') ? '2' : '1',
+              type: '1',
             },
           });
         }

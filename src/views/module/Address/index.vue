@@ -2,15 +2,18 @@
   <div class="address-page">
     <a-card :bordered="false" class="address-panel">
       <div class="table-operations">
-        <div class="table-operations__title">
-          <h3>任务列表</h3>
-          <p>点击任意任务行可查看该任务下的地址明细。</p>
-        </div>
         <div class="table-operations__actions">
-          <a-button type="primary" @click="$refs.CreateForm.handleAdd()">
+          <a-button type="primary" class="address-create-btn" @click="$refs.CreateForm.handleAdd()">
             <a-icon type="plus" />新建位置信息任务
           </a-button>
-          <table-setting :table-size.sync="tableSize" v-model="columns" :refresh-loading="loading" @refresh="getList" />
+          <div class="address-setting-pill">
+            <table-setting
+              :table-size.sync="tableSize"
+              v-model="columns"
+              :refresh-loading="loading"
+              @refresh="getList"
+            />
+          </div>
         </div>
       </div>
 
@@ -301,7 +304,7 @@
 
   .address-panel {
     border: 0;
-    border-radius: 26px;
+    border-radius: 24px;
     overflow: hidden;
     background: #fff;
     box-shadow: 0 12px 32px rgba(22, 119, 255, 0.08);
@@ -314,22 +317,11 @@
   .table-operations {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 22px;
-    padding: 4px 2px 18px;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 0 0 18px;
     border-bottom: 1px solid #e8f1fb;
-  }
-
-  .table-operations__title h3 {
-    margin: 0 0 6px;
-    font-size: 20px;
-    color: #1f2d3d;
-  }
-
-  .table-operations__title p {
-    margin: 0;
-    color: #6b7a90;
   }
 
   .table-operations__actions {
@@ -338,10 +330,28 @@
     gap: 12px;
   }
 
+  .address-create-btn {
+    height: 38px;
+    padding: 0 20px;
+    border-radius: 999px;
+    box-shadow: 0 12px 24px rgba(22, 119, 255, 0.22);
+    font-weight: 700;
+  }
+
+  .address-setting-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #dcecff;
+    border-radius: 999px;
+    background: #f7fbff;
+  }
+
   .task-cell strong {
     display: block;
     font-size: 15px;
-    color: #0f172a;
+    color: #10233f;
     margin-bottom: 4px;
   }
 
@@ -356,8 +366,10 @@
     gap: 8px;
     padding: 8px 12px;
     border-radius: 999px;
-    background: #f0f7ff;
+    background: linear-gradient(135deg, #eef7ff, #f6fbff);
+    border: 1px solid #d9eaff;
     color: #1677ff;
+    font-weight: 600;
   }
 
   .time-cell span,
@@ -371,12 +383,19 @@
     gap: 6px;
   }
 
+  .tag-list :deep(.ant-tag) {
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-weight: 600;
+  }
+
   .status-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 8px 14px;
     border-radius: 999px;
+    border: 1px solid #d9eaff;
     background: #f0f7ff;
     color: #1677ff;
     font-weight: 600;
@@ -387,6 +406,7 @@
     height: 8px;
     border-radius: 50%;
     background: currentColor;
+    box-shadow: 0 0 12px rgba(22, 119, 255, 0.45);
   }
 
   .remark-cell {
@@ -399,28 +419,42 @@
   }
 
   :deep(.address-table .ant-table-thead > tr > th) {
-    background: #f7fbff;
+    background: rgba(243, 248, 255, 0.84);
     color: #355070;
     font-weight: 700;
     border-bottom: 1px solid #e6eff8;
+    backdrop-filter: blur(12px);
   }
 
   :deep(.address-table .ant-table-tbody > tr > td) {
     border-bottom: 1px solid #edf3fa;
     padding-top: 18px;
     padding-bottom: 18px;
+    transition: all 0.2s ease;
   }
 
   :deep(.ant-table-tbody > tr.custom-table-row:hover > td) {
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: #f5faff !important;
+    background: transparent !important;
+    box-shadow: none;
+  }
+
+  :deep(.address-pagination .ant-pagination-item) {
+    border-radius: 10px;
+  }
+
+  :deep(.address-pagination .ant-pagination-item-active) {
+    border-color: #1677ff;
+    box-shadow: 0 8px 18px rgba(22, 119, 255, 0.18);
   }
 
   @media (max-width: 960px) {
     .table-operations {
-      flex-direction: column;
-      align-items: stretch;
+      justify-content: flex-start;
+    }
+
+    .address-page {
+      padding: 12px;
     }
   }
 </style>

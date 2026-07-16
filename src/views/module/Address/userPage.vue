@@ -70,10 +70,10 @@
         <div class="works-cell">{{ text || "暂无数据" }}</div>
       </template>
 
-      <span slot="operation" slot-scope="text, record">
+      <span slot="operation" slot-scope="text, record" class="operation-actions">
         <a-button
           type="link"
-          class="detail-link"
+          class="detail-link detail-link--primary"
           @click="goDetailPage(record)"
           v-if="record.status !== 0"
         >
@@ -82,8 +82,7 @@
 
         <a-button
           type="link"
-          class="detail-link"
-          style="margin-left: 10px; color: red"
+          class="detail-link detail-link--danger"
           @click="deleteRow(record)"
         >
           <a-icon type="delete" />删除
@@ -91,8 +90,7 @@
 
         <a-button
           type="link"
-          class="detail-link"
-          style="margin-left: 10px"
+          class="detail-link detail-link--primary"
           @click="retweetRow(record)"
         >
           <a-icon type="retweet" />重新获取
@@ -499,9 +497,53 @@ export default {
   color: #64748b;
 }
 
-.detail-link {
-  padding: 0;
+.operation-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.operation-actions .detail-link.ant-btn,
+.operation-actions .detail-link.ant-btn-link {
+  height: 28px;
+  padding: 0 2px;
+  border-color: transparent !important;
+  border-radius: 8px;
+  background: transparent !important;
+  box-shadow: none !important;
   font-weight: 600;
+  line-height: 28px;
+}
+
+.operation-actions .detail-link.ant-btn:hover,
+.operation-actions .detail-link.ant-btn:focus,
+.operation-actions .detail-link.ant-btn:active,
+.operation-actions .detail-link.ant-btn-link:hover,
+.operation-actions .detail-link.ant-btn-link:focus,
+.operation-actions .detail-link.ant-btn-link:active {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.operation-actions .detail-link--primary {
+  color: #1677ff !important;
+}
+
+.operation-actions .detail-link--primary:hover,
+.operation-actions .detail-link--primary:focus {
+  color: #0958d9 !important;
+}
+
+.operation-actions .detail-link--danger {
+  color: #ff4d4f !important;
+}
+
+.operation-actions .detail-link--danger:hover,
+.operation-actions .detail-link--danger:focus {
+  color: #d9363e !important;
 }
 
 .user-modal__footer {

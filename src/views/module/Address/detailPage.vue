@@ -1,5 +1,5 @@
 <template>
-  <div class="address">
+  <div class="address address--light-douyin">
     <div class="video-list-container">
       <!-- 头部卡片区域 -->
       <div class="video-list__page-header">
@@ -191,7 +191,7 @@
                         </span>
 
                         <!-- 核心修改1：状态区域 - 已获取时显示按钮 -->
-                        <div class="meta-row__item status-button-wrapper tooltip-header__btn-wrap">
+                        <div class="status-button-wrapper tooltip-header__btn-wrap">
                           <!-- 非已获取状态：保持原有样式 -->
                           <span
                             v-if="getStatusText(video.status) !== '已获取'"
@@ -334,7 +334,14 @@
       </a-spin>
 
       <!-- 视频评论弹窗 -->
-      <a-modal v-model="modalVisible" width="70%" destroyOnClose :footer="null" class="custom-modal-top">
+      <a-modal
+        v-model="modalVisible"
+        width="92%"
+        destroyOnClose
+        :footer="null"
+        class="custom-modal-top"
+        wrapClassName="address-video-modal-wrap"
+      >
         <VideoCommentModalItem
           :video="currentModalVideo"
           :video-index="currentModalVideoIndex"
@@ -1361,9 +1368,50 @@
   // 其他基础样式
   .custom-modal-top {
     .ant-modal {
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      top: 50px !important;
+      max-width: calc(100vw - 48px);
+      border-radius: 20px;
+      box-shadow: 0 22px 56px rgba(15, 35, 63, 0.18);
+      top: 24px !important;
+    }
+
+    .ant-modal-content {
+      position: relative;
+      overflow: visible;
+      border: 1px solid #dfeaf7;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 22px 56px rgba(15, 35, 63, 0.16);
+    }
+
+    .ant-modal-body {
+      padding: 12px;
+      border-radius: 20px;
+      background: #ffffff;
+    }
+
+    .ant-modal-close {
+      top: 10px;
+      right: 10px;
+      z-index: 30;
+      width: 36px;
+      height: 36px;
+      border: 1px solid #dbeafe;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 22px rgba(15, 35, 63, 0.12);
+    }
+
+    .ant-modal-close-x {
+      width: 34px;
+      height: 34px;
+      color: #6b829f;
+      font-size: 16px;
+      line-height: 34px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #1677ff;
+      }
     }
   }
 
@@ -2130,8 +2178,11 @@
       }
 
       .douyin-card__content {
-        gap: 26px;
+        min-height: 360px;
+        max-height: none;
+        gap: 24px;
         align-items: stretch;
+        overflow: visible;
       }
 
       .douyin-card__left,
@@ -2148,6 +2199,17 @@
 
       .douyin-card__right {
         padding: 22px;
+        min-height: 320px;
+        overflow: visible;
+      }
+
+      .douyin-card__region-img {
+        min-height: 320px;
+      }
+
+      .douyin-comment__scroll {
+        min-height: 260px;
+        max-height: 420px;
       }
 
       .douyin-comment__title,
@@ -2169,11 +2231,15 @@
 
     .video-list__sort-buttons {
       position: sticky;
-      top: 12px;
+      top: 0;
       z-index: 5;
-      margin-bottom: 24px;
-      padding: 18px 20px;
-      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 56px;
+      margin-bottom: 16px;
+      padding: 10px 18px;
+      border-radius: 18px;
       border: 1px solid #e4eef9;
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(14px);
@@ -2199,7 +2265,21 @@
     .video-list__sort-buttons .sort-btn,
     .video-list__sort-buttons .reset-btn,
     .video-list__sort-buttons .ant-select {
-      height: 40px;
+      height: 36px;
+    }
+
+    .video-list__sort-buttons .sort-btn,
+    .video-list__sort-buttons .reset-btn {
+      line-height: 34px;
+    }
+
+    .video-list__sort-buttons .ant-select-selection {
+      height: 36px;
+      line-height: 34px;
+    }
+
+    .video-list__sort-buttons .ant-select-selection__rendered {
+      line-height: 34px;
     }
 
     .video-list__video-card {
@@ -2255,6 +2335,25 @@
         background: #f3f8ff;
         color: #355070;
         border: 1px solid #dbeafe;
+      }
+
+      .status-button-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+
+      .tooltip-header__btn-wrap .ant-btn {
+        border-radius: 999px;
+        box-shadow: none;
+
+        &:hover,
+        &:focus {
+          box-shadow: none;
+        }
       }
 
       .content__divider {
@@ -2339,6 +2438,243 @@
 
       .video-list__video-card .video-card__info-section {
         padding: 18px;
+      }
+    }
+  }
+
+  .address.address--light-douyin {
+    position: relative;
+    background: #f5f8fc !important;
+
+    .video-list-container {
+      position: relative;
+      max-width: 1680px;
+      background: transparent !important;
+    }
+
+    .video-list__douyin-card {
+      position: relative;
+      border: 1px solid #dfeaf7 !important;
+      border-radius: 26px !important;
+      background: #ffffff !important;
+      box-shadow: 0 10px 28px rgba(31, 45, 61, 0.06) !important;
+
+      .ant-card-body {
+        position: relative;
+        padding: 26px !important;
+      }
+
+      .douyin-card__content {
+        gap: 24px !important;
+      }
+
+      .douyin-card__left,
+      .douyin-card__right {
+        border: 1px solid #e5eef8 !important;
+        border-radius: 22px !important;
+        background: #f8fbff !important;
+        box-shadow: none !important;
+      }
+
+      .douyin-card__region-img {
+        border-radius: 18px;
+        border: 1px solid #e5eef8;
+        background: #ffffff;
+        box-shadow: none;
+      }
+
+      .douyin-comment__title {
+        color: #10233f !important;
+        font-weight: 700;
+
+        i {
+          color: #1677ff;
+        }
+      }
+
+      .douyin-comment__item {
+        border-bottom-color: #edf3fa !important;
+      }
+
+      .user-info__username,
+      .comment-item__text {
+        color: #25364d !important;
+      }
+
+      .user-info__time,
+      .empty-state__hint,
+      .load-more__no-more {
+        color: #7b8da6 !important;
+      }
+
+      .load-more__btn {
+        color: #1677ff !important;
+      }
+    }
+
+    .video-list__sort-buttons {
+      border: 1px solid #dfeaf7 !important;
+      border-radius: 18px !important;
+      background: #ffffff !important;
+      box-shadow: 0 8px 22px rgba(31, 45, 61, 0.05) !important;
+
+      .sort-buttons__label {
+        color: #355070 !important;
+        font-weight: 700 !important;
+      }
+
+      .sort-btn,
+      .reset-btn {
+        border-radius: 999px !important;
+        border-color: #d9e6f5 !important;
+        color: #355070;
+        font-weight: 600;
+      }
+
+      .sort-btn.ant-btn-primary {
+        background: #1677ff !important;
+        border-color: #1677ff !important;
+        box-shadow: none !important;
+      }
+
+      .ant-select-selection {
+        border-color: #d9e6f5;
+        border-radius: 999px;
+        background: #f8fbff;
+      }
+    }
+
+    .video-list__video-card {
+      position: relative;
+      border: 1px solid #dfeaf7 !important;
+      border-radius: 24px !important;
+      background: #ffffff !important;
+      box-shadow: 0 10px 28px rgba(31, 45, 61, 0.06) !important;
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: #cfe0f5 !important;
+        box-shadow: 0 14px 32px rgba(31, 45, 61, 0.08) !important;
+      }
+
+      .ant-card-body {
+        position: relative;
+        padding: 26px !important;
+      }
+
+      .video-card__info-section {
+        border: 1px solid #e5eef8 !important;
+        border-radius: 22px !important;
+        background: #f8fbff !important;
+        box-shadow: none !important;
+      }
+
+      .info-section__header {
+        border-bottom-color: #edf3fa !important;
+      }
+
+      .header__title {
+        color: #10233f !important;
+        font-size: 19px !important;
+        font-weight: 700 !important;
+      }
+
+      .header__title::before {
+        display: none !important;
+      }
+
+      .avatar-row__avatar {
+        border: 4px solid #ffffff !important;
+        box-shadow: 0 8px 22px rgba(22, 119, 255, 0.12) !important;
+      }
+
+      .nickname__text {
+        color: #10233f !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+      }
+
+      .meta-row__item,
+      .meta-row__region {
+        border: 1px solid #d9e6f5 !important;
+        border-radius: 999px !important;
+        background: #ffffff !important;
+        color: #355070 !important;
+        font-weight: 600;
+      }
+
+      .status-fetched-btn,
+      .status-button-wrapper .ant-btn-primary {
+        border-radius: 999px !important;
+        background: #1677ff !important;
+        border-color: #1677ff !important;
+        box-shadow: none !important;
+        font-weight: 700 !important;
+      }
+
+      .profile__content,
+      .profile__content--empty,
+      .content__data-item,
+      .zhuye-card__content,
+      .video-comment__item,
+      .stats-grid__item {
+        border: 1px solid #e5eef8 !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .stats-grid__item {
+        min-height: 136px;
+        border-color: #dbeafe !important;
+        background: #ffffff !important;
+      }
+
+      .stats-grid__icon {
+        width: 42px !important;
+        height: 42px !important;
+        margin-bottom: 12px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 8px 18px rgba(22, 119, 255, 0.16) !important;
+
+        .anticon {
+          color: #ffffff !important;
+          font-size: 20px !important;
+        }
+      }
+
+      .stats-grid__icon--likes {
+        background: linear-gradient(135deg, #1677ff, #69b1ff) !important;
+      }
+
+      .stats-grid__icon--follow {
+        background: linear-gradient(135deg, #2563eb, #60a5fa) !important;
+      }
+
+      .stats-grid__icon--fans {
+        background: linear-gradient(135deg, #4f46e5, #818cf8) !important;
+      }
+
+      .stats-grid__value {
+        color: #10233f !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+      }
+
+      .stats-grid__label {
+        color: #355070 !important;
+        font-weight: 700 !important;
+      }
+    }
+
+    .empty-state {
+      border: 1px solid #e5eef8 !important;
+      border-radius: 22px !important;
+      background: #ffffff !important;
+      box-shadow: none !important;
+
+      i {
+        color: #1677ff !important;
       }
     }
   }

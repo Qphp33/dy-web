@@ -4,18 +4,56 @@
       <!-- 左侧视频区域 -->
       <div class="video-card__left">
         <!-- 视频播放区域 -->
-        <div class="video-card__player-wrap" v-if="video && video.videoPath">
-          <div class="video-player-container">
+        <div class="video-card__player-wrap" v-if="hasVideoSource">
+          <div class="video-player-shell" :class="{ 'is-player-ready': videoReady }">
+            <div
+              v-if="!videoReady && !videoLoadError"
+              class="video-player-placeholder"
+            >
+              <img
+                v-if="video.imagePath"
+                :src="getUrl(video.imagePath)"
+                alt="视频封面"
+                class="video-player-placeholder__poster"
+              />
+              <div class="video-player-placeholder__overlay">
+                <a-spin />
+                <div class="video-player-placeholder__title">视频加载中</div>
+                <div class="video-player-placeholder__desc">
+                  正在准备当前位置视频，请稍候
+                </div>
+              </div>
+            </div>
+
+            <div v-if="videoLoadError" class="video-player-empty">
+              <a-icon type="video-camera" />
+              <div class="video-player-empty__title">视频暂时无法播放</div>
+              <div class="video-player-empty__desc">
+                可能是视频源未就绪或网络异常，请稍后重试
+              </div>
+            </div>
+
+            <div class="video-player-container">
             <video
               :id="`video-player-${video.uid || video.id}`"
               class="video-js vjs-big-play-centered"
               controls
-              preload="auto"
+              preload="metadata"
               :poster="video.imagePath ? getUrl(video.imagePath) : ''"
             >
               <source :src="getUrl(video.videoPath)" type="video/mp4" />
               您的浏览器不支持HTML5视频播放
             </video>
+            </div>
+          </div>
+        </div>
+        <div class="video-card__player-wrap video-card__player-wrap--empty" v-else>
+          <div class="video-player-empty">
+            <a-icon type="video-camera" />
+            <div class="video-player-empty__title">暂无当前位置视频</div>
+            <div class="video-player-empty__desc">
+              当前任务还没有可播放的视频内容
+            </div>
           </div>
         </div>
         <!-- 视频信息 -->
@@ -25,20 +63,24 @@
           </h3>
           <div class="video-info__stats">
             <span class="stats__item">
-              <a-icon type="like" />
-              {{ video.jsonString?.likes || 0 }} 点赞
+              <span class="stats__icon"><a-icon type="like" /></span>
+              <span class="stats__value">{{ video.jsonString?.likes || 0 }}</span>
+              <span class="stats__label">点赞</span>
             </span>
             <span class="stats__item">
-              <a-icon type="message" />
-              {{ video.jsonString?.comments || 0 }} 评论
+              <span class="stats__icon"><a-icon type="message" /></span>
+              <span class="stats__value">{{ video.jsonString?.comments || 0 }}</span>
+              <span class="stats__label">评论</span>
             </span>
             <span class="stats__item">
-              <a-icon type="share-alt" />
-              {{ video.jsonString?.shares || 0 }} 分享
+              <span class="stats__icon"><a-icon type="share-alt" /></span>
+              <span class="stats__value">{{ video.jsonString?.shares || 0 }}</span>
+              <span class="stats__label">分享</span>
             </span>
             <span class="stats__item">
-              <a-icon type="check-square" />
-              {{ video.jsonString?.collects || 0 }} 收藏
+              <span class="stats__icon"><a-icon type="check-square" /></span>
+              <span class="stats__value">{{ video.jsonString?.collects || 0 }}</span>
+              <span class="stats__label">收藏</span>
             </span>
           </div>
         </div>
@@ -47,16 +89,14 @@
       <!-- 右侧评论区 -->
       <div class="video-card__right">
         <div class="video-comment__header">
-          <div>
-            <a-icon type="message" />
-            <span style="margin-left: 7px"
-              >全部评论
-              {{
-                video.comments.length > 0
-                  ? " (" + video.comments.length + ")"
-                  : ""
-              }}</span
-            >
+          <div class="video-comment__header-title">
+            <span class="video-comment__header-icon">
+              <a-icon type="message" />
+            </span>
+            <span>
+              全部评论
+              <small v-if="video.comments.length > 0">({{ video.comments.length }})</small>
+            </span>
           </div>
           <div class="btn_box" v-if="video.comments.length > 0">
             <a
@@ -148,7 +188,21 @@
               <span v-else class="load-more__no-more">已加载全部评论</span>
             </div>
           </div>
-          <div class="video-comment__empty" v-else>暂无评论~</div>
+          <div class="video-comment__empty" v-else>
+            <div class="video-comment__empty-card">
+              <div class="video-comment__empty-glow"></div>
+              <div class="video-comment__empty-icon">
+                <a-icon type="message" />
+              </div>
+              <div class="video-comment__empty-title">暂无评论</div>
+              <div class="video-comment__empty-desc">
+                当前位置视频暂时没有评论数据，后续同步后会在这里展示互动内容
+              </div>
+              <div class="video-comment__empty-tip">
+                <a-icon type="clock-circle" /> 等待评论同步
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -321,6 +375,8 @@ export default {
       tooltipPosition: { x: 0, y: 0 },
       currentUserInfo: {},
       videoListModalVisible: false,
+      videoReady: false,
+      videoLoadError: false,
       tooltipHideTimer: null, // 修复3：初始化定时器变量
     };
   },
@@ -329,15 +385,23 @@ export default {
       this.initVideoPlayer();
     });
   },
+  beforeDestroy() {
+    this.teardownComponent();
+  },
   beforeUnmount() {
-    if (this.player && this.player.dispose) {
-      this.player.dispose();
-      this.player = null;
-    }
-    // 修复4：清除定时器，防止内存泄漏
-    clearTimeout(this.tooltipHideTimer);
+    this.teardownComponent();
+  },
+  watch: {
+    video() {
+      this.$nextTick(() => {
+        this.initVideoPlayer();
+      });
+    },
   },
   computed: {
+    hasVideoSource() {
+      return !!(this.video && this.video.videoPath);
+    },
     commentStatus() {
       const defaultStatus = {
         loading: false,
@@ -356,12 +420,38 @@ export default {
     },
   },
   methods: {
-    initVideoPlayer() {
+    resetVideoState() {
+      this.videoReady = false;
+      this.videoLoadError = false;
+    },
+    disposeVideoPlayer() {
       if (this.player && this.player.dispose) {
         this.player.dispose();
-        this.player = null;
       }
-      if (!this.video || !this.video.videoPath) return;
+      this.player = null;
+    },
+    teardownComponent() {
+      this.disposeVideoPlayer();
+      clearTimeout(this.tooltipHideTimer);
+    },
+    markVideoReady() {
+      if (this.player && this.player.controlBar) {
+        ["currentTimeDisplay", "durationDisplay", "timeDivider"].forEach((key) => {
+          const control = this.player.controlBar[key];
+          if (control && control.show) control.show();
+        });
+      }
+      this.videoLoadError = false;
+      this.videoReady = true;
+    },
+    markVideoError() {
+      this.videoReady = false;
+      this.videoLoadError = true;
+    },
+    initVideoPlayer() {
+      this.disposeVideoPlayer();
+      this.resetVideoState();
+      if (!this.hasVideoSource) return;
       const playerId = `video-player-${this.video.uid || this.video.id}`;
       const playerElement = document.getElementById(playerId);
       if (playerElement) {
@@ -370,6 +460,7 @@ export default {
           controls: true,
           responsive: true,
           fluid: true,
+          aspectRatio: "9:16",
           playbackRates: [0.5, 1, 1.5, 2],
           language: "zh-CN",
           controlBar: {
@@ -379,13 +470,13 @@ export default {
             timeDivider: true,
             remainingTimeDisplay: false,
           },
-          preload: "auto",
+          preload: "metadata",
         });
-        this.player.on("loadedmetadata", () => {
-          this.player.controlBar.currentTimeDisplay.show();
-          this.player.controlBar.durationDisplay.show();
-          this.player.controlBar.timeDivider.show();
-        });
+        this.player.one("loadedmetadata", () => this.markVideoReady());
+        this.player.one("canplay", () => this.markVideoReady());
+        this.player.one("error", () => this.markVideoError());
+      } else {
+        this.markVideoError();
       }
     },
     getLoadedComments() {
@@ -586,14 +677,25 @@ export default {
 
 <style lang="less" scoped>
 // 样式部分保持不变，已包含之前的优化
+/* 当前位置视频弹窗：大尺寸、低层级浅色面板 */
 .video-comment-modal-wrap {
   width: 100%;
-  height: 100%;
-  max-height: 780px;
+  height: calc(100vh - 112px);
+  max-height: none;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #f7f8fa;
+  padding: 10px;
+  border: 1px solid #dfeaf7;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: none;
   position: relative;
+
+  &::before {
+    display: none;
+    content: none;
+  }
+
   .video-js {
     min-height: 100% !important;
     height: 100% !important;
@@ -601,9 +703,11 @@ export default {
 
   .video-card__content {
     display: flex;
-    gap: 15px;
+    gap: 16px;
     width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 1;
     box-sizing: border-box;
   }
 
@@ -617,43 +721,180 @@ export default {
   }
 
   .video-card__left {
-    flex: 0 0 31%;
+    flex: 0 0 clamp(320px, 24vw, 420px);
+    width: clamp(320px, 24vw, 420px);
+    max-width: 420px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     height: 100%;
-    min-height: 780px;
+    max-height: none;
+    min-height: 0;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
 
     .video-card__player-wrap {
       flex: 1;
-      min-height: 700px;
-      width: 86%;
-      border-radius: 8px;
-      background-color: #000;
+      width: 100%;
+      min-height: 0;
+      padding: 8px;
+      border: 1px solid #dbeafe;
+      border-radius: 16px;
+      background: #f8fbff;
+      box-shadow: none;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
 
-      .video-player-container {
+      &--empty {
+        min-height: 520px;
+
+        & > .video-player-empty {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          min-height: 520px;
+          border-radius: 14px;
+        }
+      }
+
+      .video-player-shell {
+        position: relative;
         width: 100%;
         height: 100%;
+        min-height: 0;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #0f172a;
+      }
+
+      .video-player-container {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.22s ease;
+      }
+
+      .is-player-ready {
+        .video-player-container {
+          opacity: 1;
+        }
       }
 
       .video-js {
         width: 100% !important;
-        min-height: 700px;
+        min-height: 0 !important;
         height: 100% !important;
-        border-radius: 8px;
+        border-radius: 14px;
         overflow: hidden;
+        background: #0f172a;
       }
-      .vjs-tech,
-      .vjs-poster {
-        min-height: 700px;
+
+      ::v-deep .video-player-shell .video-js,
+      ::v-deep .video-player-shell .video-js.vjs-fluid,
+      ::v-deep .video-player-shell .video-js.vjs-16-9,
+      ::v-deep .video-player-shell .video-js.vjs-9-16 {
         width: 100% !important;
         height: 100% !important;
+        padding-top: 0 !important;
+      }
+
+      ::v-deep .video-player-shell .vjs-tech,
+      ::v-deep .video-player-shell video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        background: #0f172a !important;
+      }
+
+      ::v-deep .video-player-shell .vjs-poster {
+        background-size: contain !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        background-color: #0f172a !important;
+      }
+
+      .vjs-tech,
+      .vjs-poster {
+        min-height: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        background: #0f172a;
+      }
+
+      .video-player-placeholder,
+      .video-player-empty {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 24px;
+        text-align: center;
+        color: #355070;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(22, 119, 255, 0.16), transparent 32%),
+          linear-gradient(180deg, rgba(247, 251, 255, 0.96) 0%, rgba(235, 245, 255, 0.96) 100%);
+        box-sizing: border-box;
+      }
+
+      .video-player-placeholder__poster {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(14px) saturate(1.08);
+        opacity: 0.32;
+        transform: scale(1.06);
+      }
+
+      .video-player-placeholder__overlay {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 18px 20px;
+        border: 1px solid rgba(219, 234, 254, 0.9);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 12px 30px rgba(22, 119, 255, 0.1);
+        backdrop-filter: blur(12px);
+      }
+
+      .video-player-placeholder__title,
+      .video-player-empty__title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #10233f;
+      }
+
+      .video-player-placeholder__desc,
+      .video-player-empty__desc {
+        max-width: 220px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #6b829f;
+      }
+
+      .video-player-empty {
+        .anticon {
+          font-size: 34px;
+          color: #1677ff;
+        }
       }
     }
 
@@ -661,7 +902,7 @@ export default {
       flex-shrink: 0;
       width: 100%;
       box-sizing: border-box;
-      padding: 0 2px;
+      padding: 0;
 
       .video-info__title {
         font-size: 16px;
@@ -676,20 +917,59 @@ export default {
       }
 
       .video-info__stats {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         align-items: center;
-        gap: 15px;
-        font-size: 11px;
-        color: #666;
+        gap: 8px;
 
         .stats__item {
           display: flex;
+          min-width: 0;
           align-items: center;
-          gap: 4px;
-          cursor: pointer;
-          transition: color 0.2s;
+          justify-content: center;
+          gap: 5px;
+          height: 32px;
+          padding: 0 8px;
+          border: 1px solid #e2eefb;
+          border-radius: 999px;
+          background: #f7fbff;
+          color: #355070;
+          font-size: 12px;
+          line-height: 1;
+          transition: color 0.2s, border-color 0.2s, background 0.2s;
+
           &:hover {
-            color: #007aff;
+            border-color: #bfddff;
+            background: #eef6ff;
+            color: #1677ff;
+          }
+
+          .stats__icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            border-radius: 50%;
+            background: rgba(22, 119, 255, 0.1);
+            color: #1677ff;
+            font-size: 11px;
+          }
+
+          .stats__value {
+            max-width: 42px;
+            overflow: hidden;
+            color: #10233f;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .stats__label {
+            color: #6b829f;
+            font-weight: 600;
+            white-space: nowrap;
           }
         }
       }
@@ -697,55 +977,115 @@ export default {
   }
 
   .video-card__right {
-    flex: 0 0 68%;
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
     height: 100%;
-    border-left: 1px solid #eee;
-    padding: 0 15px;
+    max-height: none;
+    min-height: 0;
+    border: 1px solid rgba(226, 238, 251, 0.82);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: #f8fbff;
+    box-shadow: none;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &::before {
+      display: none;
+      content: none;
+    }
 
     .video-comment__header {
       font-size: 13px;
       display: flex;
       justify-content: space-between;
-
+      align-items: center;
       gap: 8px;
       width: 100%;
       flex-shrink: 0;
-      color: #333;
-      font-weight: 500;
+      padding: 2px 2px 14px;
+      color: #10233f;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      border-bottom: 1px solid rgba(226, 238, 251, 0.82);
     }
-    .btn_box {
-      float: right;
-      margin-right: 16px;
 
-      a {
-        font-weight: 700;
-        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-          sans-serif;
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        text-decoration-thickness: 1px;
-        text-decoration-color: #1890ff;
+    .video-comment__header-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      small {
+        margin-left: 4px;
+        color: #6b829f;
+        font-size: 12px;
+        font-weight: 600;
       }
     }
+
+    .video-comment__header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(22, 119, 255, 0.1);
+      color: #1677ff;
+    }
+
+    .btn_box {
+      float: right;
+      margin-right: 0;
+
+      a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #1677ff;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(22, 119, 255, 0.08);
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #bfddff;
+          background: #eef6ff;
+          color: #0958d9;
+        }
+      }
+    }
+
     .video-comment__scroll {
       flex: 1;
-      height: 740px;
+      height: auto;
+      min-height: 0;
       overflow-y: auto;
+      margin-top: 14px;
       padding-right: 5px;
+      position: relative;
+      z-index: 1;
       scrollbar-width: thin;
-      scrollbar-color: #ddd #f5f5f5;
+      scrollbar-color: #c9ddf5 transparent;
       box-sizing: border-box;
 
       &::-webkit-scrollbar {
         width: 6px;
       }
       &::-webkit-scrollbar-thumb {
-        background-color: #ddd;
+        background-color: #c9ddf5;
         border-radius: 3px;
       }
       &::-webkit-scrollbar-track {
-        background-color: #f5f5f5;
+        background-color: transparent;
         border-radius: 3px;
       }
     }
@@ -846,13 +1186,97 @@ export default {
 
     .video-comment__empty {
       text-align: center;
-      padding: 30px 0;
-      color: #999;
+      min-height: 100%;
+      padding: 18px;
+      color: #6b829f;
       font-size: 13px;
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .video-comment__empty-card {
+      position: relative;
+      width: 92%;
+      max-width: 420px;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 34px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(244, 249, 255, 0.56)),
+        radial-gradient(circle at 50% 0%, rgba(22, 119, 255, 0.12), transparent 44%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 18px 48px rgba(22, 119, 255, 0.1);
+      backdrop-filter: blur(18px) saturate(150%);
+      overflow: hidden;
+    }
+
+    .video-comment__empty-glow {
+      position: absolute;
+      top: -56px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(22, 119, 255, 0.14);
+      filter: blur(18px);
+    }
+
+    .video-comment__empty-icon {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border: 1px solid #dbeafe;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #eef6ff);
+      color: #1677ff;
+      font-size: 26px;
+      box-shadow: 0 12px 28px rgba(22, 119, 255, 0.14);
+    }
+
+    .video-comment__empty-title {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      color: #10233f;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .video-comment__empty-desc {
+      position: relative;
+      z-index: 1;
+      max-width: 280px;
+      color: #6b829f;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .video-comment__empty-tip {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 6px 12px;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #1677ff;
+      font-size: 12px;
+      font-weight: 700;
     }
   }
 
