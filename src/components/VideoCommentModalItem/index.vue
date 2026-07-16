@@ -703,7 +703,7 @@ export default {
 
   .video-card__content {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
     height: 100%;
     position: relative;
@@ -721,7 +721,9 @@ export default {
   }
 
   .video-card__left {
-    flex: 0 0 38%;
+    flex: 0 0 clamp(320px, 24vw, 420px);
+    width: clamp(320px, 24vw, 420px);
+    max-width: 420px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -976,7 +978,8 @@ export default {
 
   .video-card__right {
     position: relative;
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
     height: 100%;
     max-height: none;
     min-height: 0;
