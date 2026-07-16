@@ -1,5 +1,5 @@
 <template>
-  <div class="address">
+  <div class="address address--light-douyin">
     <div class="video-list-container">
       <!-- 头部卡片区域 -->
       <div class="video-list__page-header">
@@ -2142,7 +2142,7 @@
     }
 
     .video-list__page-header {
-      margin-bottom: 12px;
+      margin-bottom: 22px;
     }
 
     .video-list__douyin-card {
@@ -2154,16 +2154,15 @@
       border: 1px solid #e2eefb;
 
       .ant-card-body {
-        padding: 12px 16px !important;
+        padding: 28px !important;
       }
 
       .douyin-card__content {
-        height: auto !important;
-        max-height: 150px;
-        min-height: 0;
-        gap: 16px;
+        min-height: 360px;
+        max-height: none;
+        gap: 24px;
         align-items: stretch;
-        overflow: hidden;
+        overflow: visible;
       }
 
       .douyin-card__left,
@@ -2175,21 +2174,22 @@
       }
 
       .douyin-card__left {
-        padding: 10px 12px;
+        padding: 18px;
       }
 
       .douyin-card__right {
-        padding: 10px 12px;
-        min-height: 0;
-        overflow: hidden;
+        padding: 22px;
+        min-height: 320px;
+        overflow: visible;
       }
 
       .douyin-card__region-img {
-        height: 126px;
+        min-height: 320px;
       }
 
       .douyin-comment__scroll {
-        max-height: 96px;
+        min-height: 260px;
+        max-height: 420px;
       }
 
       .douyin-comment__title,
