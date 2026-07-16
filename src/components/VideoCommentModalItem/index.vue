@@ -677,32 +677,23 @@ export default {
 
 <style lang="less" scoped>
 // 样式部分保持不变，已包含之前的优化
+/* 当前位置视频弹窗：大尺寸、低层级浅色面板 */
 .video-comment-modal-wrap {
   width: 100%;
-  height: 100%;
-  max-height: 780px;
+  height: calc(100vh - 112px);
+  max-height: none;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 14px;
-  border: 1px solid rgba(226, 238, 251, 0.9);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 16% 8%, rgba(22, 119, 255, 0.14), transparent 28%),
-    radial-gradient(circle at 88% 0%, rgba(37, 244, 238, 0.12), transparent 26%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(244, 249, 255, 0.68) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 24px 70px rgba(22, 119, 255, 0.12);
-  backdrop-filter: blur(22px) saturate(145%);
+  padding: 10px;
+  border: 1px solid #dfeaf7;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: none;
   position: relative;
 
   &::before {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border-radius: inherit;
-    content: "";
-    background: linear-gradient(120deg, rgba(255, 255, 255, 0.72), rgba(22, 119, 255, 0.08), rgba(37, 244, 238, 0.08));
+    display: none;
+    content: none;
   }
 
   .video-js {
@@ -712,7 +703,7 @@ export default {
 
   .video-card__content {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     width: 100%;
     height: 100%;
     position: relative;
@@ -730,13 +721,13 @@ export default {
   }
 
   .video-card__left {
-    flex: 0 0 32%;
+    flex: 0 0 38%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    height: 74vh;
-    max-height: 780px;
-    min-height: 640px;
+    gap: 10px;
+    height: 100%;
+    max-height: none;
+    min-height: 0;
     box-sizing: border-box;
     overflow: visible;
 
@@ -744,11 +735,11 @@ export default {
       flex: 1;
       width: 100%;
       min-height: 0;
-      padding: 10px;
+      padding: 8px;
       border: 1px solid #dbeafe;
-      border-radius: 24px;
-      background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
-      box-shadow: 0 16px 36px rgba(22, 119, 255, 0.08);
+      border-radius: 16px;
+      background: #f8fbff;
+      box-shadow: none;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -763,7 +754,7 @@ export default {
           inset: auto;
           width: 100%;
           min-height: 520px;
-          border-radius: 18px;
+          border-radius: 14px;
         }
       }
 
@@ -771,8 +762,8 @@ export default {
         position: relative;
         width: 100%;
         height: 100%;
-        min-height: 560px;
-        border-radius: 18px;
+        min-height: 0;
+        border-radius: 14px;
         overflow: hidden;
         background: #0f172a;
       }
@@ -797,7 +788,7 @@ export default {
         width: 100% !important;
         min-height: 0 !important;
         height: 100% !important;
-        border-radius: 18px;
+        border-radius: 14px;
         overflow: hidden;
         background: #0f172a;
       }
@@ -986,35 +977,22 @@ export default {
   .video-card__right {
     position: relative;
     flex: 1 1 auto;
-    height: 74vh;
-    max-height: 780px;
-    min-height: 640px;
+    height: 100%;
+    max-height: none;
+    min-height: 0;
     border: 1px solid rgba(226, 238, 251, 0.82);
-    border-radius: 24px;
-    padding: 16px 18px;
-    background:
-      radial-gradient(circle at 12% 0%, rgba(22, 119, 255, 0.1), transparent 32%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(247, 251, 255, 0.62));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      0 14px 36px rgba(22, 119, 255, 0.08);
-    backdrop-filter: blur(18px) saturate(140%);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: #f8fbff;
+    box-shadow: none;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 
     &::before {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      border-radius: inherit;
-      content: "";
-      background-image:
-        linear-gradient(rgba(22, 119, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(22, 119, 255, 0.035) 1px, transparent 1px);
-      background-size: 38px 38px;
-      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.38), transparent 72%);
+      display: none;
+      content: none;
     }
 
     .video-comment__header {
