@@ -2641,6 +2641,28 @@
             font-weight: 800;
           }
         }
+
+        .history-crawl-link {
+          display: inline-flex;
+          align-items: center;
+          min-height: 24px;
+          padding-bottom: 1px;
+          border-bottom: 2px solid transparent;
+          line-height: 21px;
+          box-sizing: border-box;
+          text-decoration: none !important;
+
+          &:hover {
+            border-bottom-color: #1677ff;
+            text-decoration: none !important;
+          }
+
+          &::after,
+          &:hover::after {
+            display: none !important;
+            content: none !important;
+          }
+        }
       }
 
       .user-card__operation-records {
