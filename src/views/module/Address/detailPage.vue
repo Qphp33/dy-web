@@ -2624,11 +2624,46 @@
         box-shadow: none !important;
       }
 
-      .stats-grid__icon,
-      .stats-grid__icon--fans,
+      .stats-grid__item {
+        min-height: 136px;
+        border-color: #dbeafe !important;
+        background: #ffffff !important;
+      }
+
+      .stats-grid__icon {
+        width: 42px !important;
+        height: 42px !important;
+        margin-bottom: 12px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 8px 18px rgba(22, 119, 255, 0.16) !important;
+
+        .anticon {
+          color: #ffffff !important;
+          font-size: 20px !important;
+        }
+      }
+
+      .stats-grid__icon--likes {
+        background: linear-gradient(135deg, #1677ff, #69b1ff) !important;
+      }
+
       .stats-grid__icon--follow {
-        background: #edf5ff !important;
-        color: #1677ff !important;
+        background: linear-gradient(135deg, #2563eb, #60a5fa) !important;
+      }
+
+      .stats-grid__icon--fans {
+        background: linear-gradient(135deg, #4f46e5, #818cf8) !important;
+      }
+
+      .stats-grid__value {
+        color: #10233f !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+      }
+
+      .stats-grid__label {
+        color: #355070 !important;
+        font-weight: 700 !important;
       }
     }
 
