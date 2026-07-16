@@ -2489,7 +2489,7 @@
         display: grid;
         grid-template-columns: 150px minmax(0, 1fr) minmax(280px, 340px);
         gap: 24px;
-        align-items: start;
+        align-items: stretch;
         padding: 28px;
       }
 
@@ -2692,7 +2692,10 @@
       }
 
       .user-card__screenshot {
+        display: flex;
+        flex-direction: column;
         flex: unset;
+        height: 100%;
         min-width: 0;
         margin-left: 0;
         padding: 16px;
@@ -2705,21 +2708,32 @@
         }
 
         .screenshot__content {
+          display: flex;
+          flex: 1;
           min-height: 260px;
-          align-items: flex-start;
+          align-items: stretch;
         }
 
         .screenshot__img-wrap {
-          max-height: 520px;
+          width: 100%;
+          height: 100%;
           border: 1px solid #e5eef8;
           border-radius: 16px;
           background: #ffffff;
           box-shadow: none;
-          overflow: auto;
+          overflow: hidden;
 
           &:hover {
             transform: none;
             box-shadow: none;
+          }
+
+          .screenshot__img {
+            width: 100%;
+            height: 100%;
+            min-height: 520px;
+            object-fit: cover;
+            object-position: top center;
           }
         }
       }
