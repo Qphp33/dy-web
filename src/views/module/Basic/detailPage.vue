@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="basic">
+  <div class="basic basic--account-detail">
     <div class="video-list-container">
       <!-- 头部卡片区域 -->
       <div class="video-list__page-header">
@@ -21,7 +21,7 @@
             <div class="user-card__base-info">
               <h3 class="base-info__nickname">
                 {{ userInfo.nickname || '未知用户' }}
-                <span style="color: purple; font-size: 14px">{{
+                <span class="base-info__real-name">{{
                   userInfo.real_name ? ' (' + userInfo.real_name + ')' : ''
                 }}</span>
               </h3>
@@ -137,7 +137,7 @@
                 </div>
               </div>
               <div class="user-card__operation-records" v-if="operationRecords.length > 0">
-                <div class="operation-records__header">
+                <div class="operation-records__header account-detail__section-title">
                   <a-icon type="clock-circle-o" style="color: #1890ff" />
                   <span>操作记录</span>
                   <span class="operation-records__count">(共{{ operationRecords.length }}条)</span>
@@ -170,7 +170,7 @@
 
             <!-- 核心修改：新增右侧截图展示区域（替代弹窗） -->
             <div class="user-card__screenshot">
-              <div class="screenshot__header">
+              <div class="screenshot__header account-detail__section-title">
                 <a-icon type="picture" style="color: #1890ff" />
                 <span>个人信息截图</span>
               </div>
@@ -2435,6 +2435,400 @@
             font-size: 12px;
           }
         }
+      }
+    }
+  }
+
+  .basic.basic--account-detail {
+    min-height: 100%;
+    background: #f5f8fc;
+    color: #10233f;
+
+    .video-list-container {
+      max-width: 1680px;
+      padding: 24px;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .account-detail__section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #edf3fa;
+      color: #10233f;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .video-list__page-header {
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .video-list__user-card,
+    .empty-card,
+    .video-list__empty,
+    .video-list__video-card {
+      border: 1px solid #dfeaf7 !important;
+      border-radius: 24px !important;
+      background: #ffffff !important;
+      box-shadow: 0 10px 28px rgba(31, 45, 61, 0.06) !important;
+    }
+
+    .video-list__user-card {
+      overflow: hidden;
+
+      /deep/ .ant-card-body {
+        padding: 0;
+      }
+
+      .user-card__wrap {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr) minmax(280px, 340px);
+        gap: 24px;
+        align-items: start;
+        padding: 28px;
+      }
+
+      .user-card__avatar {
+        display: flex;
+        justify-content: center;
+        padding: 18px 12px;
+        border: 1px solid #e5eef8;
+        border-radius: 22px;
+        background: #f8fbff;
+
+        .ant-avatar {
+          border: 4px solid #ffffff;
+          box-shadow: 0 10px 24px rgba(22, 119, 255, 0.12);
+        }
+      }
+
+      .user-card__base-info {
+        min-width: 0;
+        padding-right: 0;
+      }
+
+      .base-info__nickname {
+        margin: 0 0 10px;
+        color: #10233f;
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .base-info__real-name {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .base-info__douyin-id {
+        display: inline-flex;
+        align-items: center;
+        margin: 0 0 14px;
+        padding: 5px 12px;
+        border: 1px solid #d9e6f5;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #355070;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .base-info__profile {
+        align-items: flex-start;
+        margin: 0 0 14px;
+        padding: 11px 14px;
+        border: 1px solid #e5eef8;
+        border-radius: 16px;
+        background: #f8fbff;
+
+        .base-info__label {
+          color: #64748b;
+          font-weight: 700;
+        }
+
+        .base-info__text {
+          color: #25364d;
+          white-space: normal;
+          line-height: 1.6;
+        }
+      }
+
+      .base-info__tags {
+        margin-bottom: 16px;
+
+        .base-info__tag {
+          border: 1px solid #d9e6f5;
+          border-radius: 999px;
+          background: #edf5ff;
+          color: #1677ff;
+          font-weight: 600;
+        }
+      }
+
+      .base-info__meta {
+        gap: 10px;
+        margin: 0 0 18px;
+
+        .meta__item {
+          min-height: 34px;
+          padding: 7px 11px;
+          border: 1px solid #e5eef8;
+          border-radius: 999px;
+          background: #ffffff;
+          color: #355070;
+          font-weight: 600;
+        }
+      }
+
+      .meta__clickable-link,
+      .history-crawl-link {
+        color: #1677ff !important;
+        font-weight: 700;
+        text-decoration: none !important;
+
+        &:hover {
+          color: #0958d9 !important;
+          text-decoration: none !important;
+        }
+      }
+
+      .tooltip-header__btn-wrap .ant-btn-primary {
+        height: 34px;
+        border-radius: 999px;
+        background: #1677ff;
+        border-color: #1677ff;
+        box-shadow: none;
+        font-weight: 700;
+      }
+
+      .user-card__stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+        padding: 14px;
+        border: 1px solid #e5eef8;
+        border-left: 1px solid #e5eef8;
+        border-radius: 18px;
+        background: #f8fbff;
+
+        .stats__item {
+          gap: 7px;
+          padding: 14px;
+          border: 1px solid #e5eef8;
+          border-radius: 14px;
+          background: #ffffff;
+
+          &:hover {
+            background: #f4f9ff;
+          }
+
+          .stats__label {
+            color: #7b8da6;
+            font-size: 12px;
+            font-weight: 700;
+          }
+
+          .stats__value {
+            color: #10233f;
+            font-size: 18px;
+            font-weight: 800;
+          }
+        }
+      }
+
+      .user-card__operation-records {
+        margin-top: 18px;
+        padding: 16px;
+        border: 1px solid #e5eef8;
+        border-left: 1px solid #e5eef8;
+        border-radius: 18px;
+        background: #ffffff;
+
+        .operation-records__header {
+          color: #10233f;
+        }
+
+        .operation-record__item {
+          border: 1px solid #edf3fa;
+          border-left: 3px solid #1677ff;
+          border-radius: 14px;
+          box-shadow: none;
+
+          &:hover {
+            transform: none;
+            box-shadow: none;
+            background: #f8fbff;
+          }
+        }
+      }
+
+      .user-card__screenshot {
+        flex: unset;
+        min-width: 0;
+        margin-left: 0;
+        padding: 16px;
+        border: 1px solid #e5eef8;
+        border-radius: 22px;
+        background: #f8fbff;
+
+        .screenshot__header {
+          color: #10233f;
+        }
+
+        .screenshot__content {
+          min-height: 260px;
+          align-items: flex-start;
+        }
+
+        .screenshot__img-wrap {
+          max-height: 520px;
+          border: 1px solid #e5eef8;
+          border-radius: 16px;
+          background: #ffffff;
+          box-shadow: none;
+          overflow: auto;
+
+          &:hover {
+            transform: none;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+
+    .video-list__empty {
+      border-radius: 24px;
+      background: #ffffff;
+    }
+
+    .video-list__card-wrap {
+      gap: 22px;
+    }
+
+    .video-list__video-card {
+      overflow: hidden;
+
+      /deep/ .ant-card-body {
+        padding: 18px;
+      }
+
+      .video-card__content {
+        gap: 16px;
+      }
+
+      .video-card__left {
+        padding: 12px;
+        border: 1px solid #e5eef8;
+        border-radius: 18px;
+        background: #f8fbff;
+      }
+
+      .video-card__player-wrap {
+        border-radius: 16px;
+        background: #0f172a;
+      }
+
+      .video-card__info {
+        padding-top: 10px;
+
+        .video-info__title {
+          color: #10233f;
+          font-weight: 700;
+        }
+
+        .video-info__stats {
+          flex-wrap: wrap;
+          gap: 10px;
+          color: #64748b;
+
+          .stats__item {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #ffffff;
+          }
+        }
+      }
+
+      .video-card__right {
+        height: auto;
+        padding: 14px;
+        border-left: 0;
+        border: 1px solid #e5eef8;
+        border-radius: 18px;
+        background: #f8fbff;
+      }
+    }
+
+    .video-comment__header {
+      align-items: center;
+      color: #10233f;
+      font-weight: 700;
+    }
+
+    .video-comment__item {
+      padding: 10px;
+      border: 1px solid #edf3fa;
+      border-bottom: 1px solid #edf3fa;
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .comment-item__text,
+    .comment-item__username {
+      color: #25364d !important;
+    }
+
+    .comment-item__time,
+    .load-more__no-more,
+    .video-comment__empty {
+      color: #7b8da6 !important;
+    }
+
+    .video-list__pagination {
+      padding: 14px 4px 0;
+    }
+
+    @media (max-width: 1280px) {
+      .video-list__user-card .user-card__wrap {
+        grid-template-columns: 140px minmax(0, 1fr);
+      }
+
+      .video-list__user-card .user-card__screenshot {
+        grid-column: 1 / -1;
+      }
+
+      .video-list__user-card .user-card__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .video-list-container {
+        padding: 14px;
+      }
+
+      .video-list__user-card .user-card__wrap {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+
+      .video-list__user-card .user-card__avatar {
+        justify-content: flex-start;
+      }
+
+      .video-list__user-card .user-card__stats {
+        grid-template-columns: 1fr;
+      }
+
+      .video-list__card-wrap {
+        grid-template-columns: 1fr;
       }
     }
   }
